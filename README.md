@@ -6,12 +6,7 @@ This project demonstrates how to set up **Nginx as a reverse proxy** to route tr
 - **Node.js API** (port 3000)  
 - **MinIO Object Storage** (port 9000)  
 
-This setup simulates a real-world deployment where multiple services are hosted behind a single domain.
-
-## 🛠️ Prerequisites
-- Ubuntu/Debian-based system  
-- Python 3.x installed  
-- Basic knowledge of Linux commands  
+This setup simulates a real-world deployment where multiple services are hosted behind a single domain. 
 
 ## ⚙️ Setup Instructions
 
