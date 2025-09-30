@@ -24,8 +24,6 @@ This project demonstrates deploying a Flask application via Nginx reverse proxy.
 ## Setup Instructions
 Refer to setup_commands.sh for automated setup or follow README instructions.
 
-## Screenshots
-*(Place your screenshots in docs/ folder)*
 
 **Flask App in Browser**
 ![Flask App](docs/flask_app.png)
