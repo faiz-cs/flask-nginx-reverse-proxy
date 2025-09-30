@@ -1,36 +1,111 @@
-# Project 2 — Flask App with Nginx Reverse Proxy
+# Project 2 — Reverse Proxy with Nginx + Flask + MinIO
 
-![Python](https://img.shields.io/badge/Python-3.11-blue)
-![Flask](https://img.shields.io/badge/Flask-2.3-green)
-![Nginx](https://img.shields.io/badge/Nginx-latest-orange)
+## 📌 Overview
+This project demonstrates how to set up **Nginx as a reverse proxy** to route traffic to different backend applications:  
+- **Flask App** (Python, port 5000)  
+- **Node.js API** (port 3000)  
+- **MinIO Object Storage** (port 9000)  
 
-## Overview
-This project demonstrates deploying a Flask application via Nginx reverse proxy. It also shows routing multiple services (Flask, Node.js, MinIO) through different endpoints using Nginx.
+This setup simulates a real-world deployment where multiple services are hosted behind a single domain.
 
-## Tech Stack & Tools
-- Python 3.x
-- Flask
-- Nginx
-- Git
-- MinIO (optional)
-- Node.js (optional)
+## 🛠️ Prerequisites
+- Ubuntu/Debian-based system  
+- Python 3.x installed  
+- Basic knowledge of Linux commands  
 
-## Features
-- Reverse proxy Flask app through Nginx
-- Multi-port routing example
-- Local domain testing using /etc/hosts
-- Professional server configuration with headers
+## ⚙️ Setup Instructions
 
-## Setup Instructions
-Refer to setup_commands.sh for automated setup or follow README instructions.
+### 1. Install Nginx and Git
+```bash
+sudo apt update
+sudo apt install -y nginx git
+```
 
+### 2. Start and Check Nginx
+```bash
+sudo systemctl start nginx
+systemctl status nginx
+```
 
-**Flask App in Browser**
-![Flask App](docs/flask_app.png)
+### 3. Set Up Python Virtual Environment
+```bash
+sudo apt install -y python3-venv
+python3 -m venv venv
+source venv/bin/activate
+```
 
-**Nginx Config**
-![Nginx Config](docs/nginx_config.png)
+### 4. Install Flask
+```bash
+pip install flask
+```
 
-## Notes
-- Ensure Flask app is running before accessing via Nginx.
-- You can extend multi-port routing to other services like Node.js or MinIO.
+### 5. Create and Run Flask App
+```bash
+mkdir ~/myapp && cd ~/myapp
+nano app.py
+```
+Paste this:
+```python
+from flask import Flask
+app = Flask(__name__)
+
+@app.route("/")
+def home():
+    return "Hello from my Cloud App running on Flask via Nginx Reverse Proxy!"
+
+if __name__ == "__main__":
+    app.run(host="192.168.43.173", port=5000)
+```
+Run the app:
+```bash
+python app.py
+```
+
+### 6. Configure Nginx Reverse Proxy
+Open default config:
+```bash
+sudo nano /etc/nginx/sites-available/default
+```
+Example config:
+```nginx
+server {
+    listen 80;
+
+    server_name mysite.com;
+
+    location / {
+        proxy_pass http://127.0.0.1:5000;   # Flask
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
+
+    location /api {
+        proxy_pass http://127.0.0.1:3000;   # Node.js
+    }
+
+    location /files {
+        proxy_pass http://127.0.0.1:9000;   # MinIO
+    }
+}
+```
+Restart Nginx:
+```bash
+sudo systemctl restart nginx
+```
+
+### 7. Test with Local Domain (Optional)
+Edit hosts file:
+```bash
+sudo nano /etc/hosts
+```
+Add:
+```
+127.0.0.1 mysite.com
+```
+Now visit:
+- `http://mysite.com/` → Flask app  
+- `http://mysite.com/api` → Node.js app  
+- `http://mysite.com/files` → MinIO  
+
+## ✅ Outcome
+You now have a working **reverse proxy setup** where Nginx routes traffic to multiple backend services (Flask, Node.js, MinIO).
