@@ -1,4 +1,4 @@
-# Project 2 — Reverse Proxy with Nginx + Flask + MinIO
+# Reverse Proxy with Nginx + Flask + MinIO
 
 ## 📌 Overview
 This project demonstrates how to set up **Nginx as a reverse proxy** to route traffic to different backend applications:  
